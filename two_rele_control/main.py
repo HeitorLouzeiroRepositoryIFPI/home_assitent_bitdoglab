@@ -63,8 +63,8 @@ if DISPLAY_AVAILABLE:
         display = None
 
 # Estados iniciais e variáveis de controle
-rele_a_estado_atual = 1  # 0 para OFF, 1 para ON
-rele_b_estado_atual = 1  # 0 para OFF, 1 para ON
+rele_a_estado_atual = 0  # 0 para OFF, 1 para ON
+rele_b_estado_atual = 0  # 0 para OFF, 1 para ON
 rele_a.value(rele_a_estado_atual)
 rele_b.value(rele_b_estado_atual)
 
@@ -79,7 +79,7 @@ mqtt_status = "Desconectado"
 def set_rele_a_state(novo_estado, origem="script"):
     global rele_a_estado_atual, mqtt_client
     rele_a_estado_atual = novo_estado
-    rele_a.value(rele_a_estado_atual)
+    rele_a.value(1 - rele_a_estado_atual)  # Inverte a lógica: 0->1, 1->0
     estado_str = "ON" if rele_a_estado_atual == 1 else "OFF"
     print(f"Relé A (GPIO19) {estado_str} (Origem: {origem})")
     if mqtt_client:
@@ -91,7 +91,7 @@ def set_rele_a_state(novo_estado, origem="script"):
 def set_rele_b_state(novo_estado, origem="script"):
     global rele_b_estado_atual, mqtt_client
     rele_b_estado_atual = novo_estado
-    rele_b.value(rele_b_estado_atual)
+    rele_b.value(1 - rele_b_estado_atual)  # Inverte a lógica: 0->1, 1->0
     estado_str = "ON" if rele_b_estado_atual == 1 else "OFF"
     print(f"Relé B (GPIO20) {estado_str} (Origem: {origem})")
     if mqtt_client:
