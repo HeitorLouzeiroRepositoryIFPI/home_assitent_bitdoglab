@@ -5,10 +5,10 @@ Esta classe gerencia o display OLED SSD1306 via I2C.
 """
 
 from machine import Pin, SoftI2C
-from config import I2C_SDA, I2C_SCL, OLED_WIDTH, OLED_HEIGHT
+from config.config import I2C_SDA, I2C_SCL, OLED_WIDTH, OLED_HEIGHT
 
 try:
-    from ..drivers.ssd1306 import SSD1306_I2C
+    from src.drivers.ssd1306 import SSD1306_I2C
     DISPLAY_AVAILABLE = True
 except ImportError:
     print("Display SSD1306 não disponível")

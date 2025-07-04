@@ -6,7 +6,7 @@ Esta classe gerencia um relé individual com botão físico e integração MQTT.
 
 from machine import Pin
 import time
-from config import DEBOUNCE_MS
+from config.config import DEBOUNCE_MS
 
 
 class RelayController:

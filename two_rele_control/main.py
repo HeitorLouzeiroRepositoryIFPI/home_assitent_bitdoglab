@@ -5,14 +5,7 @@ Sistema de controle de 2 relés com botões físicos e integração MQTT.
 Agora organizado em módulos separados para melhor manutenibilidade.
 """
 
-import sys
-import os
-
-# Adicionar os caminhos ao sys.path para importações
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'config'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
-
+# Import direto do SystemController
 from src.controllers.system_controller import SystemController
 
 

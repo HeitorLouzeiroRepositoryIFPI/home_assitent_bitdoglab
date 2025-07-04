@@ -5,11 +5,11 @@ Esta classe coordena todos os componentes do sistema de controle de relés.
 """
 
 import time
-from .relay_controller import RelayController
-from .display_controller import DisplayController
-from ..managers.wifi_manager import WiFiManager
-from ..managers.mqtt_manager import MQTTManager
-from config import (
+from src.controllers.relay_controller import RelayController
+from src.controllers.display_controller import DisplayController
+from src.managers.wifi_manager import WiFiManager
+from src.managers.mqtt_manager import MQTTManager
+from config.config import (
     PIN_BUTTON_A, PIN_BUTTON_B, PIN_RELE_A, PIN_RELE_B,
     MQTT_TOPIC_RELE_A_STATE, MQTT_TOPIC_RELE_A_COMMAND, MQTT_TOPIC_RELE_A_AVAILABILITY,
     MQTT_TOPIC_RELE_B_STATE, MQTT_TOPIC_RELE_B_COMMAND, MQTT_TOPIC_RELE_B_AVAILABILITY,

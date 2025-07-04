@@ -4,8 +4,8 @@ Gerenciador de Conexão MQTT
 Esta classe gerencia a comunicação MQTT do sistema.
 """
 
-from umqtt.simple import MQTTClient
-from config import MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASSWORD, MQTT_CLIENT_ID
+from lib.umqtt.simple import MQTTClient
+from config.config import MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASSWORD, MQTT_CLIENT_ID
 
 
 class MQTTManager:

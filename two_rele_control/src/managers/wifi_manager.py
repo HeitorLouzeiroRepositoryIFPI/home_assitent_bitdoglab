@@ -6,7 +6,7 @@ Esta classe gerencia a conexão WiFi do sistema.
 
 import network
 import time
-from config import WIFI_SSID, WIFI_PASSWORD, WIFI_TIMEOUT
+from config.config import WIFI_SSID, WIFI_PASSWORD, WIFI_TIMEOUT
 
 
 class WiFiManager:

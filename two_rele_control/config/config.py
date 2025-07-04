@@ -1,14 +1,14 @@
 # Arquivo de configuração para o controlador de relés
 
 # --- Configurações de Rede ---
-WIFI_SSID = "You-name-wifi"
-WIFI_PASSWORD = "you-password"
+WIFI_SSID = "rede"
+WIFI_PASSWORD = "internet"
 
 # --- Configurações do Broker MQTT ---
-MQTT_BROKER = "you-ip"  # Ex: "192.168.1.100" ou "test.mosquitto.org"
+MQTT_BROKER = "192.168.0.100"  # Ex: "192.168.1.100" ou "test.mosquitto.org"
 MQTT_PORT = 1883
-MQTT_USER = "you-user-mqtt"  # Deixe em branco se não houver autenticação
-MQTT_PASSWORD = "you-password-mqtt"  # Deixe em branco se não houver autenticação
+MQTT_USER = ""  # Deixe em branco se não houver autenticação
+MQTT_PASSWORD = ""  # Deixe em branco se não houver autenticação
 MQTT_CLIENT_ID = "bitdoglab_dual_rele_controller"
 
 # --- Configurações de Pinos ---

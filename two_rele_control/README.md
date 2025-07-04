@@ -42,7 +42,34 @@ two_rele_control/
 │   ├── README.md                   # Esta documentação
 │   └── LICENSE                     # Licença MIT
 ├── main.py                     # Arquivo principal
-└── __init__.py                # Inicialização do pacote
+├── boot.py                     # Script de inicialização MicroPython
+└── test_imports.py             # Teste de imports (desenvolvimento)
+```
+
+---
+
+## 🎯 Compatibilidade MicroPython
+
+### **Imports Ajustados**
+O projeto foi organizado para funcionar perfeitamente com **MicroPython**:
+
+```python
+# Imports absolutos (compatível com MicroPython)
+from src.controllers.system_controller import SystemController
+from config.config import WIFI_SSID, MQTT_BROKER
+from lib.umqtt.simple import MQTTClient
+```
+
+### **Execução no MicroPython**
+```python
+# Opção 1: Direto
+python main.py
+
+# Opção 2: Via boot script  
+python boot.py
+
+# Opção 3: Teste de imports
+python test_imports.py
 ```
 
 ---
