@@ -1,142 +1,158 @@
-# Configuração Home Assistant - Solenoide RFID
+# Controle de Solenoide RFID - Dois Setores
 
-Este arquivo contém a configuração completa para integrar o solenoide controlado via MQTT ao Home Assistant.
+Este projeto implementa o controle de dois solenoides via MQTT para integração com Home Assistant.
 
-## 📋 Pré-requisitos
+## 🚀 Funcionalidades
 
-1. Home Assistant instalado e funcionando
-2. Broker MQTT configurado e acessível
-3. Dispositivo ESP32/Raspberry Pi Pico executando o código `main.py`
+- Controle de dois solenoides independentes (Setor 1 e Setor 2)
+- Comunicação via MQTT
+- Integração com Home Assistant
+- Suporte a comandos ON/OFF/TOGGLE
+- Reconexão automática em caso de falha
+- Estados independentes para cada setor
+- **LED interno indica status da conexão MQTT**
 
-## 🔧 Instalação
+## 🔧 Hardware
 
-### Opção 1: Adicionar ao configuration.yaml principal
+- **Setor 1**: GPIO 16
+- **Setor 2**: GPIO 17
+- **LED Interno**: Indica status da conexão MQTT
+- Raspberry Pi Pico W com conectividade Wi-Fi
 
-1. Abra o arquivo `configuration.yaml` do seu Home Assistant
-2. Copie e cole o conteúdo do arquivo `configuration.yaml` deste projeto
-3. Ajuste as configurações conforme necessário (IP do broker, credenciais, etc.)
-4. Reinicie o Home Assistant
+## 📊 Tópicos MQTT
 
-### Opção 2: Usar includes (recomendado)
-
-1. Crie uma pasta `packages` na pasta de configuração do Home Assistant
-2. Copie o arquivo `configuration.yaml` para `packages/solenoide_rfid.yaml`
-3. Adicione no `configuration.yaml` principal:
-   ```yaml
-   homeassistant:
-     packages: !include_dir_named packages
-   ```
-4. Reinicie o Home Assistant
-
-## 🎛️ Entidades Criadas
-
-### Switch
-- **switch.solenoide_setor_1**: Controla o solenoide (ON/OFF)
-
-### Sensor
-- **sensor.solenoide_setor_1_status**: Monitora o status de conectividade
-
-### Input Controls
-- **input_number.irrigacao_duracao_setor1**: Define duração da irrigação
-- **input_boolean.irrigacao_automatica_setor1**: Habilita/desabilita automação
-
-### Scripts
-- **script.irrigar_setor1**: Irriga por 1 minuto
-- **script.irrigar_setor1_personalizado**: Irriga por tempo personalizado
-
-### Automações
-- **Ativar Solenoide por RFID**: Ativa quando cartão autorizado é detectado
-- **Desativar Solenoide por RFID Não Autorizado**: Notifica acesso negado
-
-## 📊 Tópicos MQTT Utilizados
-
-- **Estado**: `pico/solenoid/setor1/state`
+### Setor 1
 - **Comando**: `pico/solenoid/setor1/set`
+- **Estado**: `pico/solenoid/setor1/state`
 - **Disponibilidade**: `pico/solenoid/setor1/status`
-- **RFID** (opcional): `pico/rfid/setor1/card_detected`
 
-## 🚀 Como Usar
+### Setor 2
+- **Comando**: `pico/solenoid/setor2/set`
+- **Estado**: `pico/solenoid/setor2/state`
+- **Disponibilidade**: `pico/solenoid/setor2/status`
 
-### Controle Manual
-1. Vá para a página inicial do Home Assistant
-2. Encontre o switch "Solenoide Setor 1"
-3. Clique para ligar/desligar
+## ⚙️ Configuração
 
-### Controle por Script
-1. Vá para **Ferramentas do Desenvolvedor** > **Serviços**
-2. Selecione `script.irrigar_setor1` ou `script.irrigar_setor1_personalizado`
-3. Execute o script
+1. Configure suas credenciais Wi-Fi no arquivo `main.py`:
+   ```python
+   WIFI_SSID = "sua_rede"
+   WIFI_PASSWORD = "sua_senha"
+   ```
 
-### Automação por RFID
-1. Configure o dispositivo para enviar dados RFID via MQTT
-2. A automação será executada automaticamente quando um cartão for detectado
+2. Configure o endereço do broker MQTT:
+   ```python
+   MQTT_BROKER = "192.168.0.100"
+   MQTT_USER = "seu_usuario"
+   MQTT_PASSWORD = "sua_senha"
+   ```
 
-## 🔧 Personalização
+3. Adicione a configuração do `configuration.yaml` no seu Home Assistant
 
-### Alternar Tempo de Irrigação Padrão
-```yaml
-script:
-  irrigar_setor1:
-    sequence:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.solenoide_setor_1
-      - delay: "00:02:00"  # Altere para 2 minutos
-      - service: switch.turn_off
-        target:
-          entity_id: switch.solenoide_setor_1
+4. Execute o script `main.py` no seu Raspberry Pi
+
+## 💡 Indicadores Visuais
+
+### LED Interno do Pico
+- **Ligado**: Conectado ao broker MQTT
+- **Desligado**: Desconectado do broker MQTT ou erro de conexão
+- **Piscando**: Tentando reconectar (durante erros de rede)
+
+O LED interno serve como indicador visual do status da conexão MQTT, facilitando o diagnóstico de problemas de conectividade.
+
+## 🎮 Comandos Suportados
+
+- `ON`: Liga o solenoide
+- `OFF`: Desliga o solenoide
+- `TOGGLE`: Inverte o estado atual
+
+## 🏠 Home Assistant
+
+O arquivo `configuration.yaml` contém a configuração completa para ambos os setores, criando dois switches independentes no Home Assistant:
+
+- **Switch Setor 1**: `switch.raspberry_pi_solenoid_rfid_setor1`
+- **Switch Setor 2**: `switch.raspberry_pi_solenoid_rfid_setor2`
+
+## 📋 Estrutura do Projeto
+
+```
+solenoide_rfid/
+├── main.py                    # Código principal do Raspberry Pi
+├── configuration.yaml         # Configuração do Home Assistant
+├── umqtt/
+│   └── simple.py             # Biblioteca MQTT
+├── README.md                 # Documentação original
+└── README_DOIS_SETORES.md    # Esta documentação
 ```
 
-### Adicionar Mais Setores
-Para adicionar mais setores, duplique as configurações alterando:
-- Tópicos MQTT (ex: `pico/solenoid/setor2/state`)
-- Nomes das entidades (ex: `solenoide_setor_2`)
-- Pinos no código do dispositivo
+## 🔄 Alterações Implementadas
 
-### Personalizar Ícones
-```yaml
-switch:
-  - platform: mqtt
-    name: "Solenoide Setor 1"
-    icon: "mdi:sprinkler"  # Ou outro ícone de sua preferência
-```
+### No `main.py`:
+- Adicionado suporte ao segundo solenoide (GPIO 17)
+- Criados tópicos MQTT independentes para cada setor
+- Função `set_rele_state()` modificada para aceitar parâmetro de setor
+- Callback MQTT atualizado para processar comandos de ambos os setores
+- Inicialização e publicação de estado para ambos os setores
+
+### No `configuration.yaml`:
+- Duas entidades switch independentes
+- Tópicos MQTT específicos para cada setor
+- Configuração de dispositivo unificada
+- Identificação única para cada switch
 
 ## 🐛 Solução de Problemas
 
+### LED Interno Como Diagnóstico
+- **LED sempre desligado**: Problema de conexão Wi-Fi ou MQTT
+- **LED liga e desliga**: Conexão instável, verifique rede
+- **LED ligado mas switches não funcionam**: Problema nos tópicos MQTT
+
 ### Dispositivo Não Aparece
-1. Verifique se o broker MQTT está funcionando
-2. Confirme se as credenciais estão corretas
-3. Verifique os logs do Home Assistant
-4. Teste a conectividade MQTT com um cliente como MQTT Explorer
+1. Verifique se o LED interno está ligado (indica conexão MQTT)
+2. Verifique se o broker MQTT está funcionando
+3. Confirme se as credenciais estão corretas
+4. Verifique os logs do Home Assistant
+5. Teste a conectividade MQTT com um cliente como MQTT Explorer
 
-### Automação Não Funciona
-1. Verifique se os tópicos MQTT estão corretos
-2. Teste manualmente enviando mensagens MQTT
-3. Verifique os logs de automação no Home Assistant
+### Apenas Um Setor Funciona
+1. Verifique se ambos os GPIOs estão conectados corretamente
+2. Confirme se os tópicos MQTT estão diferentes para cada setor
+3. Teste enviando comandos manualmente via MQTT para cada setor
 
-### Switch Não Responde
+### Switches Não Respondem
 1. Verifique se o dispositivo está online
 2. Confirme se os tópicos de comando estão corretos
 3. Teste enviando comandos manualmente via MQTT
+4. Verifique os logs do console do Raspberry Pi
 
-## 📝 Logs Úteis
-
-Para debugar problemas, habilite logs detalhados:
-
-```yaml
-logger:
-  default: info
-  logs:
-    homeassistant.components.mqtt: debug
-    homeassistant.components.switch.mqtt: debug
-```
-
-## 🔄 Backup e Restauração
-
-Sempre faça backup do seu `configuration.yaml` antes de fazer alterações:
+## 📝 Exemplo de Uso via MQTT
 
 ```bash
-cp configuration.yaml configuration.yaml.backup
+# Ligar Setor 1
+mosquitto_pub -h 192.168.0.100 -t "pico/solenoid/setor1/set" -m "ON"
+
+# Desligar Setor 1
+mosquitto_pub -h 192.168.0.100 -t "pico/solenoid/setor1/set" -m "OFF"
+
+# Ligar Setor 2
+mosquitto_pub -h 192.168.0.100 -t "pico/solenoid/setor2/set" -m "ON"
+
+# Desligar Setor 2
+mosquitto_pub -h 192.168.0.100 -t "pico/solenoid/setor2/set" -m "OFF"
+```
+
+## 🔍 Monitoramento
+
+Para monitorar os estados dos setores:
+
+```bash
+# Monitorar estado Setor 1
+mosquitto_sub -h 192.168.0.100 -t "pico/solenoid/setor1/state"
+
+# Monitorar estado Setor 2
+mosquitto_sub -h 192.168.0.100 -t "pico/solenoid/setor2/state"
+
+# Monitorar todos os tópicos
+mosquitto_sub -h 192.168.0.100 -t "pico/solenoid/+/+"
 ```
 
 ## 📞 Suporte
@@ -146,3 +162,4 @@ Para problemas específicos:
 2. Teste a conectividade MQTT
 3. Confirme se o dispositivo está executando o código correto
 4. Verifique se todas as configurações de rede estão corretas
+5. Teste cada setor individualmente

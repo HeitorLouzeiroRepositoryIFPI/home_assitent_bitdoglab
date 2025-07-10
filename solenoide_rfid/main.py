@@ -1,5 +1,6 @@
 # rele_mqtt.py - Controle de Relé via MQTT na BitDogLab
 # NOTA: Os relés usam lógica invertida (GPIO baixo = ligado, GPIO alto = desligado)
+# LED interno indica status da conexão MQTT (ligado = conectado, desligado = desconectado)
 
 from machine import Pin
 from umqtt.simple import MQTTClient
@@ -21,6 +22,7 @@ MQTT_CLIENT_ID = "raspberry_pi_solenoid_rfid"  # Identificador único do cliente
 # Pinos (conforme informado pelo usuário)
 PIN_RELE_SETOR1 = 16
 PIN_RELE_SETOR2 = 17
+PIN_LED_INTERNO = "LED"  # LED interno do Pico
 
 # Tópicos MQTT - Setor 1
 MQTT_TOPIC_RELE_STATE_SETOR1 = "pico/solenoid/setor1/state"    # Publica o estado atual (ON/OFF)
@@ -36,6 +38,7 @@ MQTT_TOPIC_RELE_AVAILABILITY_SETOR2 = "pico/solenoid/setor2/status"
 # Configuração dos Pinos
 rele_setor1 = Pin(PIN_RELE_SETOR1, Pin.OUT)
 rele_setor2 = Pin(PIN_RELE_SETOR2, Pin.OUT)
+led_interno = Pin(PIN_LED_INTERNO, Pin.OUT)
 
 # Estado inicial e variáveis de controle
 rele_estado_atual_setor1 = 0  # 0 para OFF, 1 para ON
@@ -43,6 +46,8 @@ rele_estado_atual_setor2 = 0  # 0 para OFF, 1 para ON
 # Lógica invertida: 1 no GPIO = desligado, 0 no GPIO = ligado
 rele_setor1.value(1 - rele_estado_atual_setor1)
 rele_setor2.value(1 - rele_estado_atual_setor2)
+# LED interno inicia desligado
+led_interno.value(0)
 
 mqtt_client = None
 
@@ -128,6 +133,10 @@ def connect_and_subscribe_mqtt():
         mqtt_client.connect()
         print(f"Conectado ao broker MQTT: {MQTT_BROKER}")
         
+        # Liga o LED interno para indicar conexão MQTT
+        led_interno.value(1)
+        print("LED interno ligado - MQTT conectado")
+        
         # Subscrever aos tópicos de comando dos dois setores
         mqtt_client.subscribe(MQTT_TOPIC_RELE_COMMAND_SETOR1)
         mqtt_client.subscribe(MQTT_TOPIC_RELE_COMMAND_SETOR2)
@@ -146,14 +155,19 @@ def connect_and_subscribe_mqtt():
         return True
     except OSError as e:
         print(f"Falha ao conectar ao broker MQTT: {e}")
+        # Desliga o LED se não conseguir conectar
+        led_interno.value(0)
         return False
     except Exception as e:
         print(f"Outro erro MQTT: {e}")
+        # Desliga o LED se não conseguir conectar
+        led_interno.value(0)
         return False
 
 print("Iniciando controle de relé via MQTT...")
 print(f"Relé Setor 1 (GPIO{PIN_RELE_SETOR1})")
 print(f"Relé Setor 2 (GPIO{PIN_RELE_SETOR2})")
+print("LED interno indica status da conexão MQTT")
 
 if not connect_wifi():
     print("Não foi possível conectar ao Wi-Fi. Verifique as configurações e reinicie.")
@@ -176,6 +190,8 @@ else:
             except OSError as e:
                 print(f"Erro de OSError no loop principal: {e}")
                 print("Tentando reconectar ao MQTT...")
+                # Desliga o LED para indicar desconexão
+                led_interno.value(0)
                 time.sleep(5)
                 if mqtt_client: 
                     try:
@@ -189,6 +205,8 @@ else:
                     print("Reconectado ao MQTT com sucesso.")
             except Exception as e:
                 print(f"Erro inesperado no loop principal: {e}")
+                # Desliga o LED em caso de erro
+                led_interno.value(0)
                 time.sleep(10)
                 # machine.reset() # Descomente para reiniciar em caso de erro grave
 
