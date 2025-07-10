@@ -1,0 +1,30 @@
+# Configuração do Home Assistant para o leitor RFID
+# Adicione este conteúdo ao seu configuration.yaml do Home Assistant
+
+mqtt:
+  sensor:
+    - name: "RFID Reader"
+      state_topic: "homeassistant/sensor/rfid_reader/state"
+      unique_id: "rfid_reader_sensor"
+      value_template: "{{ value_json.card_id }}"
+      json_attributes_topic: "homeassistant/sensor/rfid_reader/state"
+      json_attributes_template: "{{ value_json | tojson }}"
+      icon: "mdi:contactless-payment"
+      device:
+        identifiers: ["rfid_reader_device"]
+        name: "RFID Reader"
+        manufacturer: "BitDogLab"
+        model: "MFRC522"
+        sw_version: "1.0"
+
+    - name: "RFID Card Text"
+      state_topic: "homeassistant/sensor/rfid_reader/state"
+      unique_id: "rfid_card_text"
+      value_template: "{{ value_json.text }}"
+      icon: "mdi:card-text"
+      device:
+        identifiers: ["rfid_reader_device"]
+        name: "RFID Reader"
+        manufacturer: "BitDogLab"
+        model: "MFRC522"
+        sw_version: "1.0"
