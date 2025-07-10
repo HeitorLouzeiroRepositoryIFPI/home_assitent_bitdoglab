@@ -1,0 +1,57 @@
+mqtt:
+  switch:
+    - name: "raspberry_pi_solenoid_rfid_setor1"
+      unique_id: "raspberry_pi_solenoid_rfid_setor1"
+      # Tópico para onde o Home Assistant envia comandos (ON/OFF/TOGGLE)
+      command_topic: "pico/solenoid/setor1/set"
+      # Tópico de onde o Home Assistant lê o estado atual do solenoide
+      state_topic: "pico/solenoid/setor1/state"
+      # Payloads que representam os estados LIGADO e DESLIGADO
+      payload_on: "ON"
+      payload_off: "OFF"
+
+      state_on: "ON"  # Valor no state_topic que significa que o solenoide está LIGADO
+      state_off: "OFF" # Valor no state_topic que significa que o solenoide está DESLIGADO
+      optimistic: false # Define como false, pois o dispositivo (Raspberry Pi) publicará seu estado real
+      availability:
+        - topic: "pico/solenoid/setor1/status"
+          payload_available: "online"
+          # O script do Raspberry Pi publica "online" quando conectado ao MQTT
+          # e o Home Assistant pode usar o Last Will and Testament (LWT) do broker MQTT
+          # para detectar quando o dispositivo fica offline.
+      qos: 0 # Qualidade de serviço para comandos enviados (0, 1, ou 2)
+      # retain: false # Comandos geralmente não devem ser retidos. O estado é retido pelo dispositivo.
+      device:
+        identifiers: ["raspberry_pi_solenoid_rfid"] # Identificador único para este dispositivo
+        name: "Raspberry Pi Controle de Solenoide RFID"
+        manufacturer: "BitDogLab Community"
+        model: "Raspberry Pi com Solenoide (GPIO16)"
+        sw_version: "1.0-solenoid-rfid"
+    
+    - name: "raspberry_pi_solenoid_rfid_setor2"
+      unique_id: "raspberry_pi_solenoid_rfid_setor2"
+      # Tópico para onde o Home Assistant envia comandos (ON/OFF/TOGGLE)
+      command_topic: "pico/solenoid/setor2/set"
+      # Tópico de onde o Home Assistant lê o estado atual do solenoide
+      state_topic: "pico/solenoid/setor2/state"
+      # Payloads que representam os estados LIGADO e DESLIGADO
+      payload_on: "ON"
+      payload_off: "OFF"
+
+      state_on: "ON"  # Valor no state_topic que significa que o solenoide está LIGADO
+      state_off: "OFF" # Valor no state_topic que significa que o solenoide está DESLIGADO
+      optimistic: false # Define como false, pois o dispositivo (Raspberry Pi) publicará seu estado real
+      availability:
+        - topic: "pico/solenoid/setor2/status"
+          payload_available: "online"
+          # O script do Raspberry Pi publica "online" quando conectado ao MQTT
+          # e o Home Assistant pode usar o Last Will and Testament (LWT) do broker MQTT
+          # para detectar quando o dispositivo fica offline.
+      qos: 0 # Qualidade de serviço para comandos enviados (0, 1, ou 2)
+      # retain: false # Comandos geralmente não devem ser retidos. O estado é retido pelo dispositivo.
+      device:
+        identifiers: ["raspberry_pi_solenoid_rfid"] # Identificador único para este dispositivo
+        name: "Raspberry Pi Controle de Solenoide RFID"
+        manufacturer: "BitDogLab Community"
+        model: "Raspberry Pi com Solenoide (GPIO17)"
+        sw_version: "1.0-solenoid-rfid"
